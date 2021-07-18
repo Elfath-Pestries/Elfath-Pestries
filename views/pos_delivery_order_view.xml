@@ -1,0 +1,140 @@
+<odoo>
+    <data>
+
+        <record id="view_pos_delivery_form" model="ir.ui.view">
+            <field name="name">pos.delivery.order.form</field>
+            <field name="model">pos.delivery.order</field>
+            <field name="arch" type="xml">
+                <form string="Delivery Orders" create="0">
+                    <header>
+                        <button name="in_progress_action" string="In Progress" type="object"
+                                class="btn-primary"
+                                attrs="{'invisible':[('delivery_state','in',['in_progress','delivered','paid','cancel'])]}"
+                        />
+                        <button name="make_payment_action" string="Make Payment" type="object"
+                                class="btn-primary"
+                                attrs="{'invisible':[('delivery_state','in',['delivered','draft','paid','cancel'])]}"
+                        />
+                        <button name="delivered_action" string="Delivered" type="object"
+                                class="btn-primary"
+                                attrs="{'invisible':[('delivery_state','in',['in_progress','draft','delivered','cancel'])]}"
+                        />
+
+                        <button name="cancel_action" string="Cancel" type="object"
+                                attrs="{'invisible':[('delivery_state','in',['paid','delivered','cancel'])]}"
+                        />
+                        <field name="delivery_state" widget="statusbar"
+                               statusbar_visible="draft,in_progress,paid,delivered,cancel"
+                        />
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="pos_order_id" invisible="1"/>
+                                <field name="partner_id"/>
+                                <label for="street" string="Address"/>
+                                <div class="o_address_format">
+                                    <field name="street" placeholder="Street..." class="o_address_street"/>
+                                    <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                                    <field name="city" placeholder="City" class="o_address_city"/>
+                                    <field name="state_id" placeholder="State" class="o_address_state"/>
+                                    <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                                    <field name="country_id" placeholder="Country" class="o_address_country"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="display_delivery_time"/>
+                                <field name="delivery_time" invisible="1"/>
+                                <field name="delivery_person"/>
+                                <field name="email"/>
+                                <field name="phone"/>
+                            </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Products">
+                                <field name="lines" colspan="4" nolabel="1">
+                                    <tree string="Order lines" editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="qty"/>
+                                        <field name="price_unit" widget="monetary"/>
+                                    </tree>
+                                    <form string="Order lines">
+                                        <group col="4">
+                                            <field name="product_id"/>
+                                            <field name="qty"/>
+                                            <field name="price_unit" widget="monetary"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                            <page string="Payments">
+                                <field name="bank_statement_ids" colspan="4" nolabel="1">
+                                    <tree editable="bottom" string="Statement lines">
+                                        <field name="payment_date"/>
+                                        <field name="payment_method_id"/>
+                                        <field name="amount"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="extra" string="Extra Info">
+                                <group>
+                                    <group>
+                                        <field name="session_id"/>
+                                        <field name="order_date"/>
+                                        <field name="order_ref"/>
+                                    </group>
+                                    <group>
+                                        <field name="cashier"/>
+                                        <field name="warehouse_id" readonly="1"/>
+                                        <field name="payment_status_with_driver" readonly="1"/>
+                                        <field name="payment_status" readonly="1"/>
+                                    </group>
+                                </group>
+                                <separator string="Order Note"/>
+                                <field name="order_note"/>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_pos_delivery_order_tree" model="ir.ui.view">
+            <field name="name">pos.delivery.order.tree</field>
+            <field name="model">pos.delivery.order</field>
+            <field name="arch" type="xml">
+                <tree string="POS Delivery Orders">
+                    <field name="name"/>
+                    <field name="display_delivery_time"/>
+                    <field name="partner_id"/>
+                    <field name="delivery_person"/>
+                    <field name="delivery_state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_pos_delivery_order_form" model="ir.actions.act_window">
+            <field name="name">Delivery Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pos.delivery.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" eval="False"/>
+            <field name="domain">[]</field>
+        </record>
+
+
+        <menuitem id="home_delivery_pos" name="Home Delivery Order"
+                  action="action_pos_delivery_order_form"
+                  parent="point_of_sale.menu_point_of_sale" sequence="2"/>
+
+    </data>
+</odoo>
+
